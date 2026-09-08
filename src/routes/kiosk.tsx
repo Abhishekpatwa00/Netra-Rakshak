@@ -10,6 +10,10 @@ import {
   History,
   X,
   Flame,
+  User,
+  Phone,
+  IdCard,
+  Lock,
 } from "lucide-react";
 import fundus from "@/assets/fundus.jpg";
 
@@ -43,7 +47,15 @@ type Scan = {
   finalGrade?: string;
   doctor?: string;
   notes?: string;
+  patientName?: string;
+  contact?: string;
+  specialId?: string;
 };
+
+const NAME_RE = /^[a-zA-Z][a-zA-Z\s.'-]{1,99}$/;
+// +91 followed by a valid 10-digit Indian mobile number.
+const PHONE_RE = /^\+91[6-9]\d{9}$/;
+const ID_RE = /^[a-zA-Z0-9-]{4,32}$/;
 
 // Mock rows standing in for a Supabase `screenings` table.
 const INITIAL_HISTORY: Scan[] = [
@@ -104,8 +116,17 @@ function KioskPage() {
   const [heatmap, setHeatmap] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [patientName, setPatientName] = useState("");
+  const [contact, setContact] = useState("");
+  const [specialId, setSpecialId] = useState("");
+
+  const nameOk = NAME_RE.test(patientName.trim());
+  const phoneOk = PHONE_RE.test(contact.trim().replace(/[\s-]/g, ""));
+  const idOk = ID_RE.test(specialId.trim());
+  const formValid = nameOk && phoneOk && idOk;
+
   function handleFile(file: File | undefined | null) {
-    if (!file) return;
+    if (!file || !formValid) return;
     const url = URL.createObjectURL(file);
     setFileName(file.name);
     setPreview(url);
@@ -126,6 +147,9 @@ function KioskPage() {
           grade: "Grade 2: Moderate NPDR",
           status: "pending",
           image: url,
+          patientName: patientName.trim(),
+          contact: contact.trim(),
+          specialId: specialId.trim(),
         },
         ...prev,
       ]);
