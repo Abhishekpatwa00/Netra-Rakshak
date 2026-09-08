@@ -274,37 +274,48 @@ function KioskPage() {
                   aria-disabled={!formValid}
                   onDragOver={(e) => {
                     if (!formValid) return;
-                  e.preventDefault();
-                  setDragging(true);
-                }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragging(false);
-                  handleFile(e.dataTransfer.files?.[0]);
-                }}
-                onClick={() => inputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
-                }}
-                className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors ${
-                  dragging ? "border-rose-500 bg-pink-100" : "border-pink-200 bg-pink-50"
-                }`}
-              >
-                <UploadCloud className="h-12 w-12 text-rose-600" />
-                <p className="mt-4 text-lg font-medium text-slate-900">
-                  Drag &amp; drop the fundus image here
-                </p>
-                <p className="mt-1 text-sm text-slate-500">or click to browse (.jpg / .png)</p>
-                <input
-                  ref={inputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  className="hidden"
-                  onChange={(e) => handleFile(e.target.files?.[0])}
-                />
+                    e.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    if (formValid) handleFile(e.dataTransfer.files?.[0]);
+                  }}
+                  onClick={() => formValid && inputRef.current?.click()}
+                  role="button"
+                  tabIndex={formValid ? 0 : -1}
+                  onKeyDown={(e) => {
+                    if (formValid && (e.key === "Enter" || e.key === " "))
+                      inputRef.current?.click();
+                  }}
+                  className={`flex flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors ${
+                    !formValid
+                      ? "cursor-not-allowed border-slate-200 bg-slate-50 opacity-60"
+                      : dragging
+                        ? "cursor-pointer border-rose-500 bg-pink-100"
+                        : "cursor-pointer border-pink-200 bg-pink-50"
+                  }`}
+                >
+                  {formValid ? (
+                    <UploadCloud className="h-12 w-12 text-rose-600" />
+                  ) : (
+                    <Lock className="h-12 w-12 text-slate-400" />
+                  )}
+                  <p className="mt-4 text-lg font-medium text-slate-900">
+                    Drag &amp; drop the fundus image here
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">or click to browse (.jpg / .png)</p>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    disabled={!formValid}
+                    className="hidden"
+                    onChange={(e) => handleFile(e.target.files?.[0])}
+                  />
+                </div>
               </div>
             )}
 
