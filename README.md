@@ -1,6 +1,6 @@
 # Netra Rakshak
 
-Create a functional MVP web application for "Drishti.AI", a Diabetic Retinopathy screening tool, using React (Next.js App Router) and Tailwind CSS. 
+Create a functional MVP web application for "Netra Rakshak", a Diabetic Retinopathy screening tool, using React (Next.js App Router) and Tailwind CSS. 
 
 ### Constraints & Tech Stack
 
