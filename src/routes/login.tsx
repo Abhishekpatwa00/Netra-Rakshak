@@ -73,7 +73,7 @@ function LoginPage() {
               <Eye className="h-6 w-6 text-rose-600" />
             </span>
             <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-              Drishti.AI Portal
+              Netra Rakshak Portal
             </h1>
             <p className="mt-1 text-sm text-slate-500">Sign in or register to continue</p>
           </div>
