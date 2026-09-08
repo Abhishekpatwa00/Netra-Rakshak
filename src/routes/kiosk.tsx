@@ -10,6 +10,10 @@ import {
   History,
   X,
   Flame,
+  User,
+  Phone,
+  IdCard,
+  Lock,
 } from "lucide-react";
 import fundus from "@/assets/fundus.jpg";
 
@@ -43,7 +47,15 @@ type Scan = {
   finalGrade?: string;
   doctor?: string;
   notes?: string;
+  patientName?: string;
+  contact?: string;
+  specialId?: string;
 };
+
+const NAME_RE = /^[a-zA-Z][a-zA-Z\s.'-]{1,99}$/;
+// +91 followed by a valid 10-digit Indian mobile number.
+const PHONE_RE = /^\+91[6-9]\d{9}$/;
+const ID_RE = /^[a-zA-Z0-9-]{4,32}$/;
 
 // Mock rows standing in for a Supabase `screenings` table.
 const INITIAL_HISTORY: Scan[] = [
@@ -104,8 +116,17 @@ function KioskPage() {
   const [heatmap, setHeatmap] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [patientName, setPatientName] = useState("");
+  const [contact, setContact] = useState("");
+  const [specialId, setSpecialId] = useState("");
+
+  const nameOk = NAME_RE.test(patientName.trim());
+  const phoneOk = PHONE_RE.test(contact.trim().replace(/[\s-]/g, ""));
+  const idOk = ID_RE.test(specialId.trim());
+  const formValid = nameOk && phoneOk && idOk;
+
   function handleFile(file: File | undefined | null) {
-    if (!file) return;
+    if (!file || !formValid) return;
     const url = URL.createObjectURL(file);
     setFileName(file.name);
     setPreview(url);
@@ -126,6 +147,9 @@ function KioskPage() {
           grade: "Grade 2: Moderate NPDR",
           status: "pending",
           image: url,
+          patientName: patientName.trim(),
+          contact: contact.trim(),
+          specialId: specialId.trim(),
         },
         ...prev,
       ]);
@@ -136,6 +160,9 @@ function KioskPage() {
     setPreview(null);
     setFileName(null);
     setStage("idle");
+    setPatientName("");
+    setContact("");
+    setSpecialId("");
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -182,39 +209,113 @@ function KioskPage() {
         {tab === "upload" && (
           <section className="mt-8">
             {stage === "idle" && (
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragging(true);
-                }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragging(false);
-                  handleFile(e.dataTransfer.files?.[0]);
-                }}
-                onClick={() => inputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
-                }}
-                className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors ${
-                  dragging ? "border-rose-500 bg-pink-100" : "border-pink-200 bg-pink-50"
-                }`}
-              >
-                <UploadCloud className="h-12 w-12 text-rose-600" />
-                <p className="mt-4 text-lg font-medium text-slate-900">
-                  Drag &amp; drop the fundus image here
-                </p>
-                <p className="mt-1 text-sm text-slate-500">or click to browse (.jpg / .png)</p>
-                <input
-                  ref={inputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  className="hidden"
-                  onChange={(e) => handleFile(e.target.files?.[0])}
-                />
+              <div className="space-y-5">
+                <div className="rounded-2xl border border-pink-100 bg-pink-50 p-6">
+                  <h2 className="text-sm font-semibold text-slate-900">Patient Details</h2>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Required before the upload zone unlocks.
+                  </p>
+                  <div className="mt-4 space-y-4">
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <User className="h-3.5 w-3.5 text-rose-600" /> Patient Full Name
+                      </span>
+                      <input
+                        type="text"
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        placeholder="e.g. Ramesh Kumar"
+                        maxLength={100}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <Phone className="h-3.5 w-3.5 text-rose-600" /> Contact Number
+                      </span>
+                      <input
+                        type="tel"
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        maxLength={16}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                      {contact.trim() !== "" && !phoneOk && (
+                        <p className="mt-1 text-xs text-rose-600">
+                          Enter a valid number: +91 followed by 10 digits.
+                        </p>
+                      )}
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <IdCard className="h-3.5 w-3.5 text-rose-600" /> Special ID / ABHA ID / Local ID
+                      </span>
+                      <input
+                        type="text"
+                        value={specialId}
+                        onChange={(e) => setSpecialId(e.target.value)}
+                        placeholder="e.g. 12-3456-7890-1234"
+                        maxLength={32}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {!formValid && (
+                  <p className="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Lock className="h-4 w-4 text-rose-500" />
+                    Fill in all patient details above to unlock image upload.
+                  </p>
+                )}
+
+                <div
+                  aria-disabled={!formValid}
+                  onDragOver={(e) => {
+                    if (!formValid) return;
+                    e.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    if (formValid) handleFile(e.dataTransfer.files?.[0]);
+                  }}
+                  onClick={() => formValid && inputRef.current?.click()}
+                  role="button"
+                  tabIndex={formValid ? 0 : -1}
+                  onKeyDown={(e) => {
+                    if (formValid && (e.key === "Enter" || e.key === " "))
+                      inputRef.current?.click();
+                  }}
+                  className={`flex flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors ${
+                    !formValid
+                      ? "cursor-not-allowed border-slate-200 bg-slate-50 opacity-60"
+                      : dragging
+                        ? "cursor-pointer border-rose-500 bg-pink-100"
+                        : "cursor-pointer border-pink-200 bg-pink-50"
+                  }`}
+                >
+                  {formValid ? (
+                    <UploadCloud className="h-12 w-12 text-rose-600" />
+                  ) : (
+                    <Lock className="h-12 w-12 text-slate-400" />
+                  )}
+                  <p className="mt-4 text-lg font-medium text-slate-900">
+                    Drag &amp; drop the fundus image here
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">or click to browse (.jpg / .png)</p>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    disabled={!formValid}
+                    className="hidden"
+                    onChange={(e) => handleFile(e.target.files?.[0])}
+                  />
+                </div>
               </div>
             )}
 
@@ -314,7 +415,12 @@ function KioskPage() {
                       }}
                       className="cursor-pointer bg-white transition-colors hover:bg-pink-50"
                     >
-                      <td className="px-4 py-3 font-medium text-slate-900">{scan.id}</td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-slate-900">{scan.id}</p>
+                        {scan.patientName && (
+                          <p className="text-xs text-slate-500">{scan.patientName}</p>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-slate-500">{scan.timestamp}</td>
                       <td className="px-4 py-3 text-slate-700">{scan.grade}</td>
                       <td className="px-4 py-3">
@@ -342,8 +448,18 @@ function KioskPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{selected.id}</h2>
-                <p className="text-sm text-slate-500">{selected.timestamp}</p>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {selected.patientName ?? selected.id}
+                </h2>
+                <p className="text-sm text-slate-500">
+                  {selected.id} · {selected.timestamp}
+                </p>
+                {selected.contact && (
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {selected.contact}
+                    {selected.specialId ? ` · ID: ${selected.specialId}` : ""}
+                  </p>
+                )}
               </div>
               <button
                 type="button"
