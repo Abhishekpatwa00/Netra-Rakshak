@@ -47,7 +47,7 @@ function LandingPage() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50">
             <Eye className="h-5 w-5 text-rose-600" />
           </span>
-          <span className="text-lg font-semibold tracking-tight text-slate-900">Drishti.AI</span>
+          <span className="text-lg font-semibold tracking-tight text-slate-900">Netra Rakshak</span>
         </div>
         <Link
           to="/login"
