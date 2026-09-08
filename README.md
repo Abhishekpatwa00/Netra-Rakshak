@@ -1,4 +1,4 @@
-# Vision Guardian
+# Netra Rakshak
 
 Create a functional MVP web application for "Drishti.AI", a Diabetic Retinopathy screening tool, using React (Next.js App Router) and Tailwind CSS. 
 
