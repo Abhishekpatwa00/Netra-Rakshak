@@ -1,75 +1,99 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Eye, Stethoscope, MonitorSmartphone } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Eye, ScanEye, Brain, Timer, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Drishti.AI — Diabetic Retinopathy Screening Login" },
+      { title: "Drishti.AI — Explainable AI Retinal Screening" },
       {
         name: "description",
         content:
-          "Sign in to Drishti.AI to run AI-assisted diabetic retinopathy screening at PHC kiosks or validate cases as an ophthalmologist.",
+          "Explainable AI diabetic retinopathy screening for rural India: instant quality triage, Grad-CAM heatmaps, and 30-second specialist validation.",
       },
-      { property: "og:title", content: "Drishti.AI — Diabetic Retinopathy Screening" },
+      { property: "og:title", content: "Drishti.AI — Explainable AI Retinal Screening" },
       {
         property: "og:description",
-        content: "AI-assisted diabetic retinopathy screening for PHC kiosks and ophthalmologists.",
+        content:
+          "Instant quality triage, Grad-CAM lesion heatmaps, and rapid specialist sign-off for rural eye screening.",
       },
     ],
   }),
-  component: LoginPage,
+  component: LandingPage,
 });
 
-function LoginPage() {
-  const navigate = useNavigate();
+const FEATURES = [
+  {
+    icon: ScanEye,
+    title: "Smart Quality Triage",
+    body: "Instant focus and illumination check with automatic CLAHE enhancement.",
+  },
+  {
+    icon: Brain,
+    title: "Explainable Grad-CAM Heatmaps",
+    body: "Zero black-box uncertainty; see exact lesion correlations.",
+  },
+  {
+    icon: Timer,
+    title: "Rapid Specialist Queue",
+    body: "Risk-sorted triage enabling doctor sign-off in under 30 seconds.",
+  },
+];
 
+function LandingPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl border border-pink-100 bg-white p-8 shadow-sm">
-        <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50">
-            <Eye className="h-7 w-7 text-rose-600" />
-          </div>
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">Drishti.AI</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Diabetic Retinopathy screening &amp; specialist validation
-          </p>
+    <main className="min-h-screen bg-white">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
+        <div className="flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50">
+            <Eye className="h-5 w-5 text-rose-600" />
+          </span>
+          <span className="text-lg font-semibold tracking-tight text-slate-900">Drishti.AI</span>
         </div>
+        <Link
+          to="/login"
+          className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-rose-600"
+        >
+          Login
+        </Link>
+      </header>
 
-        <div className="mt-8 space-y-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Select your role
-          </p>
-
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/kiosk" })}
-            className="flex w-full items-center gap-4 rounded-xl bg-rose-600 px-5 py-4 text-left text-white transition-colors hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
-          >
-            <MonitorSmartphone className="h-6 w-6 shrink-0" />
-            <span>
-              <span className="block text-base font-semibold">Enter as PHC Kiosk</span>
-              <span className="block text-sm text-rose-100">Capture and upload fundus images</span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/doctor" })}
-            className="flex w-full items-center gap-4 rounded-xl border border-pink-200 bg-pink-50 px-5 py-4 text-left text-slate-900 transition-colors hover:bg-pink-100 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
-          >
-            <Stethoscope className="h-6 w-6 shrink-0 text-rose-600" />
-            <span>
-              <span className="block text-base font-semibold">Enter as Ophthalmologist</span>
-              <span className="block text-sm text-slate-500">Validate AI grades with XAI</span>
-            </span>
-          </button>
-        </div>
-
-        <p className="mt-8 text-center text-xs text-slate-400">
-          Demo build — screening results are simulated and not for clinical use.
+      <section className="mx-auto w-full max-w-3xl px-6 pt-10 pb-16 text-center sm:pt-16">
+        <p className="inline-flex rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-rose-700">
+          Explainable screening for frontline care
         </p>
-      </div>
+        <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          Explainable AI Retinal Screening for Rural India
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-base text-slate-500 sm:text-lg">
+          Empowering frontline health workers with instant quality control, sub-pixel lesion
+          detection, and 30-second specialist validation.
+        </p>
+        <Link
+          to="/login"
+          className="mt-8 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2"
+        >
+          Access Portal / Login <ArrowRight className="h-5 w-5" />
+        </Link>
+      </section>
+
+      <section className="mx-auto grid w-full max-w-6xl gap-5 px-6 pb-20 sm:grid-cols-3">
+        {FEATURES.map((f) => (
+          <article
+            key={f.title}
+            className="rounded-2xl border border-pink-100 bg-pink-50 p-6 text-left"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white">
+              <f.icon className="h-5 w-5 text-rose-600" />
+            </span>
+            <h2 className="mt-4 text-lg font-semibold text-slate-900">{f.title}</h2>
+            <p className="mt-2 text-sm text-slate-600">{f.body}</p>
+          </article>
+        ))}
+      </section>
+
+      <footer className="border-t border-pink-100 px-6 py-6 text-center text-xs text-slate-400">
+        Demo build — screening results are simulated and not for clinical use.
+      </footer>
     </main>
   );
 }
