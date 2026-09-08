@@ -415,7 +415,12 @@ function KioskPage() {
                       }}
                       className="cursor-pointer bg-white transition-colors hover:bg-pink-50"
                     >
-                      <td className="px-4 py-3 font-medium text-slate-900">{scan.id}</td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-slate-900">{scan.id}</p>
+                        {scan.patientName && (
+                          <p className="text-xs text-slate-500">{scan.patientName}</p>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-slate-500">{scan.timestamp}</td>
                       <td className="px-4 py-3 text-slate-700">{scan.grade}</td>
                       <td className="px-4 py-3">
@@ -443,8 +448,18 @@ function KioskPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{selected.id}</h2>
-                <p className="text-sm text-slate-500">{selected.timestamp}</p>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {selected.patientName ?? selected.id}
+                </h2>
+                <p className="text-sm text-slate-500">
+                  {selected.id} · {selected.timestamp}
+                </p>
+                {selected.contact && (
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {selected.contact}
+                    {selected.specialId ? ` · ID: ${selected.specialId}` : ""}
+                  </p>
+                )}
               </div>
               <button
                 type="button"
