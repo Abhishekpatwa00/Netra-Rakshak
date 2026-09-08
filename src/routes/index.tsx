@@ -4,7 +4,7 @@ import { Eye, ScanEye, Brain, Timer, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Drishti.AI — Explainable AI Retinal Screening" },
+      { title: "Netra Rakshak — Explainable AI Retinal Screening" },
       {
         name: "description",
         content:
