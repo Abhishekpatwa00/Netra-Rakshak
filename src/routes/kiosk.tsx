@@ -160,6 +160,9 @@ function KioskPage() {
     setPreview(null);
     setFileName(null);
     setStage("idle");
+    setPatientName("");
+    setContact("");
+    setSpecialId("");
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -206,8 +209,71 @@ function KioskPage() {
         {tab === "upload" && (
           <section className="mt-8">
             {stage === "idle" && (
-              <div
-                onDragOver={(e) => {
+              <div className="space-y-5">
+                <div className="rounded-2xl border border-pink-100 bg-pink-50 p-6">
+                  <h2 className="text-sm font-semibold text-slate-900">Patient Details</h2>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Required before the upload zone unlocks.
+                  </p>
+                  <div className="mt-4 space-y-4">
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <User className="h-3.5 w-3.5 text-rose-600" /> Patient Full Name
+                      </span>
+                      <input
+                        type="text"
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        placeholder="e.g. Ramesh Kumar"
+                        maxLength={100}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <Phone className="h-3.5 w-3.5 text-rose-600" /> Contact Number
+                      </span>
+                      <input
+                        type="tel"
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        maxLength={16}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                      {contact.trim() !== "" && !phoneOk && (
+                        <p className="mt-1 text-xs text-rose-600">
+                          Enter a valid number: +91 followed by 10 digits.
+                        </p>
+                      )}
+                    </label>
+                    <label className="block">
+                      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <IdCard className="h-3.5 w-3.5 text-rose-600" /> Special ID / ABHA ID / Local ID
+                      </span>
+                      <input
+                        type="text"
+                        value={specialId}
+                        onChange={(e) => setSpecialId(e.target.value)}
+                        placeholder="e.g. 12-3456-7890-1234"
+                        maxLength={32}
+                        className="w-full rounded-xl border border-pink-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {!formValid && (
+                  <p className="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Lock className="h-4 w-4 text-rose-500" />
+                    Fill in all patient details above to unlock image upload.
+                  </p>
+                )}
+
+                <div
+                  aria-disabled={!formValid}
+                  onDragOver={(e) => {
+                    if (!formValid) return;
                   e.preventDefault();
                   setDragging(true);
                 }}
